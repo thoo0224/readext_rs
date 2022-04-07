@@ -25,6 +25,12 @@ pub trait ReadExt {
     fn read_i64_le(&mut self) -> ReaderResult<i64>;
     fn read_u64_le(&mut self) -> ReaderResult<u64>;
 
+    fn read_i32_be(&mut self) -> ReaderResult<i32>;
+    fn read_u32_be(&mut self) -> ReaderResult<u32>;
+
+    fn read_i64_be(&mut self) -> ReaderResult<i64>;
+    fn read_u64_be(&mut self) -> ReaderResult<u64>;
+
 }
 
 impl<Impl> ReadExt for Impl
@@ -37,11 +43,11 @@ where
     where 
         F: Fn(&mut Self) -> T 
     {
-        let length = self.read_i32::<LittleEndian>()?;
+        let length = self.read_i32_le()?;
         self.read_array_with_length(serialize, length)
     }
 
-    #[inline]
+    #[inline(always)]
     fn read_array_be<T, F>(&mut self, serialize: F) -> ReaderResult<Vec<T>>
     where 
         F: Fn(&mut Self) -> T 
@@ -64,7 +70,7 @@ where
     }
 
     fn read_fstring(&mut self) -> ReaderResult<String> {
-        let length = self.read_i32::<LittleEndian>()?;
+        let length = self.read_i32_le()?;
         if length == 0 {
             return Ok(String::from(""));
         }
@@ -89,21 +95,44 @@ where
         Ok(String::from_utf8(buffer[0..len].to_vec())?)
     }
 
-
+    #[inline(always)]
     fn read_i32_le(&mut self) -> ReaderResult<i32> {
         Ok(self.read_i32::<LittleEndian>()?)
     }
 
+    #[inline(always)]
     fn read_u32_le(&mut self) -> ReaderResult<u32> {
         Ok(self.read_u32::<LittleEndian>()?)
     }
 
+    #[inline(always)]
     fn read_i64_le(&mut self) -> ReaderResult<i64> {
         Ok(self.read_i64::<LittleEndian>()?)
     }
 
+    #[inline(always)]
     fn read_u64_le(&mut self) -> ReaderResult<u64> {
         Ok(self.read_u64::<LittleEndian>()?)
+    }
+
+    #[inline(always)]
+    fn read_i32_be(&mut self) -> ReaderResult<i32> {
+        Ok(self.read_i32::<BigEndian>()?)
+    }
+
+    #[inline(always)]
+    fn read_u32_be(&mut self) -> ReaderResult<u32> {
+        Ok(self.read_u32::<BigEndian>()?)
+    }
+
+    #[inline(always)]
+    fn read_i64_be(&mut self) -> ReaderResult<i64> {
+        Ok(self.read_i64::<BigEndian>()?)
+    }
+
+    #[inline(always)]
+    fn read_u64_be(&mut self) -> ReaderResult<u64> {
+        Ok(self.read_u64::<BigEndian>()?)
     }
 
 }
