@@ -19,6 +19,12 @@ pub trait ReadExt {
 
     fn read_fstring(&mut self) -> ReaderResult<String>;
 
+    fn read_i32_le(&mut self) -> ReaderResult<i32>;
+    fn read_u32_le(&mut self) -> ReaderResult<u32>;
+
+    fn read_i64_le(&mut self) -> ReaderResult<i64>;
+    fn read_u64_le(&mut self) -> ReaderResult<u64>;
+
 }
 
 impl<Impl> ReadExt for Impl
@@ -81,6 +87,23 @@ where
         self.read_exact(buffer.as_mut_slice())?;
 
         Ok(String::from_utf8(buffer[0..len].to_vec())?)
+    }
+
+
+    fn read_i32_le(&mut self) -> ReaderResult<i32> {
+        Ok(self.read_i32::<LittleEndian>()?)
+    }
+
+    fn read_u32_le(&mut self) -> ReaderResult<u32> {
+        Ok(self.read_u32::<LittleEndian>()?)
+    }
+
+    fn read_i64_le(&mut self) -> ReaderResult<i64> {
+        Ok(self.read_i64::<LittleEndian>()?)
+    }
+
+    fn read_u64_le(&mut self) -> ReaderResult<u64> {
+        Ok(self.read_u64::<LittleEndian>()?)
     }
 
 }
